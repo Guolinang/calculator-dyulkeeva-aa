@@ -89,9 +89,10 @@ List parse() {
 	Stack stack;
 	stack.top = ((void*)0);
 	int numb=0;
-	char tmp=getchar();
+	char tmp;
 	int flagNumb=0;
-	while (tmp != (-1)) {
+	do {
+		tmp=getchar();
 		switch (tmp) {
 		case '0': case '1': case '2': case '3': case '4':
 		case '5': case '6': case '7': case '8': case '9':
@@ -135,7 +136,8 @@ List parse() {
 			stackPush(&stack, tmp, 0);
 
 			break;
-        case '\n': case EOF:
+        case '\n':
+		case EOF:
 			if (flagNumb) {
 				listPush(&list, numb, 1);
 				numb = 0;
@@ -147,14 +149,18 @@ List parse() {
             }
             goto BREAK;
 		case ' ':
+			if (flagNumb) {
+				listPush(&list, numb, 1);
+				numb = 0;
+				flagNumb = 0;			}
 			break;
 		default:
 			printf("Ne rabotaet?ny xz, zaplach`");
 			break;
 
 		}
-		tmp=getchar();
-	}
+
+	}while (tmp!=-1);
 	BREAK:
 	return list;
 }
