@@ -1,6 +1,7 @@
 #include "stdio.h"
 #include "stdlib.h"
 #include "string.h"
+#include <string.h>
 
 typedef struct Node {
     void* number;
@@ -36,21 +37,6 @@ void stackPush(Stack* s, void* num, int isNum)
     tmp->next = s->top;
     s->top = tmp;
     return;
-}
-
-void stackPrint(Stack* s)
-{
-    Node* tmpTop = s->top;
-    while (tmpTop != ((void*)0)) {
-        if (tmpTop->isNum == 1) {
-            if (isFloat == 1)
-                printf("%f\n", *(double*)tmpTop->number);
-            else
-                printf("%ld\n", *(long*)tmpTop->number);
-        } else
-            printf("%c\n", *(char*)tmpTop->number);
-        tmpTop = tmpTop->next;
-    }
 }
 
 typedef struct List {
@@ -131,8 +117,8 @@ List parse()
         case '(':
             if (flagNumb) {
                 if (isFloat == 1) {
-                    ptr = malloc(sizeof(float));
-                    *(float*)ptr = numb;
+                    ptr = malloc(sizeof(double));
+                    *(double*)ptr = numb;
                 } else {
                     ptr = malloc(sizeof(long));
                     *(long*)ptr = numb;
@@ -238,7 +224,7 @@ BREAK:
     return list;
 }
 
-void Calculate(List* list)
+void* Calculate(List* list)
 {
     Node* tmp = list->start;
     long cl;
@@ -284,39 +270,30 @@ void Calculate(List* list)
                     *(long*)t = cl;
                     stackPush(&stack, t, 1);
                 }
-                free(a);
-                free(b);
             } else {
                 printf("Error: wrong expression");
                 exit(-2);
             }
         }
         tmp = tmp->next;
+
     }
-    if (!isFloat)
-        printf("%ld", *(long*)stack.top->number);
-    else
-        printf("%f", *(double*)stack.top->number);
+
+    void* res=stack.top->number;
+    while (stack.top != NULL && stack.top->next!=NULL) {
+        Node* tmp = stack.top;
+        stack.top = stack.top->next;
+        free(tmp->number);
+        free(tmp);
+    }
+    return res;
 }
 
-void printList(List* l)
-{
-    Node* s = l->start;
-    while (s != NULL) {
-        if (s->isNum) {
-            if (isFloat) {
-                printf("%f\n", *(double*)s->number);
-            } else
-                printf("%ld\n", *(long*)s->number);
-        } else {
-            printf("%c\n", *(char*)s->number);
-        }
-        s = s->next;
-    }
-}
 
+#ifndef GTEST
 int main(int argc, char** argv)
 {
+
     if (argc == 1)
         isFloat = 0;
     else if (argc >= 2) {
@@ -328,7 +305,21 @@ int main(int argc, char** argv)
     } else
         isFloat = 0;
     List list = parse();
-    printList(&list);
-    Calculate(&list);
+    void* res=Calculate(&list);
+    if (!isFloat)
+        printf("%ld", *(long*)res);
+    else
+        printf("%0.5f", *(double*)res);
+    Node* current = list.start;
+    while (current != NULL) {
+        Node* next = current->next;
+        free(current->number);
+        free(current);
+        current = next;
+    }
+    list.start = NULL;
+    list.end = NULL;
+
     return 0;
 }
+#endif
