@@ -44,6 +44,8 @@ typedef struct List {
     Node* end;
 } List;
 
+int ExToken=0;
+
 void listPush(List* l, void* n, int isNum)
 {
 
@@ -111,6 +113,8 @@ List parse()
         case '7':
         case '8':
         case '9':
+            if (ExToken!=0)
+                exit (-3);
             numb = numb * 10 + (tmp - '0');
             flagNumb = 1;
             break;
@@ -126,6 +130,7 @@ List parse()
                 listPush(&list, ptr, 1);
                 numb = 0;
                 flagNumb = 0;
+                ExToken=1;
             }
             ptr = malloc(sizeof(char));
             *(char*)ptr = tmp;
@@ -140,9 +145,11 @@ List parse()
                     ptr = malloc(sizeof(long));
                     *(long*)ptr = numb;
                 }
+                ExToken=1;
                 listPush(&list, ptr, 1);
                 numb = 0;
                 flagNumb = 0;
+
             }
             while (stack.top != NULL && *(char*)stack.top->number != '(') {
                 void* tNumb = stackPop(&stack);
@@ -166,10 +173,15 @@ List parse()
                     ptr = malloc(sizeof(long));
                     *(long*)ptr = numb;
                 }
+                ExToken=1;
                 listPush(&list, ptr, 1);
                 numb = 0;
                 flagNumb = 0;
+
             }
+            if (ExToken==0)
+                exit (-3);
+            ExToken=0;
             while (stack.top != NULL && opPriority(*(char*)stack.top->number, tmp) != 2 && *(char*)stack.top->number != '(') {
                 void* tNumb = stackPop(&stack);
                 listPush(&list, tNumb, 0);
@@ -191,6 +203,7 @@ List parse()
                 listPush(&list, ptr, 1);
                 numb = 0;
                 flagNumb = 0;
+                ExToken=1;
             }
 
             while (stack.top != NULL) {
@@ -215,6 +228,7 @@ List parse()
                 listPush(&list, ptr, 1);
                 numb = 0;
                 flagNumb = 0;
+                ExToken=1;
             }
             break;
         default:

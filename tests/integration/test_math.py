@@ -21,9 +21,9 @@ def test_tab1():
     assert (abs(float(res.stdout)-13)<10**(-4))
 
 def test_tab2():
-    res=subprocess.run(["build/app.exe", "--float"], input="(((((((((((((((((((((((((((((((((((((((((((((((((((((((((((((((((((((((((((((((((((((((((((((((((((((((((((((((((((((((\n((\n(((((((((((((2+1+(((((((((((((((((((((((((((((((((((((((((((((((((((((((((((((((((((((((((2*4)))))))))))))))))))))))))))))))))))))))))))))))))))))))))\f))\f))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))",text=True,capture_output=True)
+    res=subprocess.run(["build/app.exe", "--float"], input="((((((((((((((((((((((((((((((((((((((((((((((((((2+((((((((((((((((((((((\n(((((((((((((((((\f(((5+((((((((((((((((((((((((((((((((((((((((((((0+9+(((((((((\n(((((((((((((((((((((((((((((((((((((((((((\n((((((((((((((((((((((((((((((((((((((((((((((((((((((((2*3))))))))))))))))))))))))))))))))))))))))))))))))))))))))\f)))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))\n)))))))))))))))))))))))))))))))))))))))))))))))))))))))\f))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))",text=True,capture_output=True)
     assert res.returncode == 0
-    assert (abs(float(res.stdout)-11)<10**(-4))
+    assert (abs(float(res.stdout)-22)<10**(-4))
 
 def test_err1():
     res=subprocess.run(["build/app.exe", "--float"], input="9+0-1+",text=True,capture_output=True)
@@ -33,12 +33,24 @@ def test_err2():
     res=subprocess.run(["build/app.exe", "--float"], input="3+2)",text=True,capture_output=True)
     assert res.returncode != 0
 
+def test_err2():
+    res=subprocess.run(["build/app.exe", "--float"], input="((3+2)+((4+0)",text=True,capture_output=True)
+    assert res.returncode != 0
+
 def test_err3():
     res=subprocess.run(["build/app.exe", "--float"], input="23++1",text=True,capture_output=True)
     assert res.returncode != 0
 
 def test_err4():
     res=subprocess.run(["build/app.exe", "--float"], input="45.12||a",text=True,capture_output=True)
+    assert res.returncode != 0
+
+def test_err5():
+    res=subprocess.run(["build/app.exe", "--float"], input="45 25",text=True,capture_output=True)
+    assert res.returncode != 0
+
+def test_err6():
+    res=subprocess.run(["build/app.exe", "--float"], input="+-45/ 25",text=True,capture_output=True)
     assert res.returncode != 0
 
 
