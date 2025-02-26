@@ -76,7 +76,7 @@ build/ParseTest.exe: build/gtest/gtest_main.a build/app-test.o tests/unit/ParseT
 		build/gtest/gtest_main.a build/app-test.o \
 		-o build/ParseTest.exe
 
-run-unit-tests: build/StackTest.exe build/ListTest.exe build/PriorityTest.exe build/CalculateTest.exe build/ParseTest.exe
+run-unit-test: build/StackTest.exe build/ListTest.exe build/PriorityTest.exe build/CalculateTest.exe build/ParseTest.exe
 	@echo "Running stack tests..."
 	@./build/StackTest.exe
 	@echo "Running list tests..."
