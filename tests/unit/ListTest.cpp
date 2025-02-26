@@ -17,17 +17,40 @@ typedef struct List {
     Node* end;
 } List;
 
-void* stackPop(Stack* s);
-void stackPush(Stack* s, void* num, int isNum);
-void stackPrint(Stack* s);
 void listPush(List* l, void* n, int isNum);
 void* listPop(List* l);
-int opPriority(int op1, int op2);
-List parse();
-void Calculate(List* list);
 }
 
-TEST(TestList, TestPushPop)
+TEST(TestList, TestPush)
+{
+
+    List l;
+    l.start = NULL;
+    l.end = NULL;
+    void* a = malloc(sizeof(long));
+    void* b = malloc(sizeof(long));
+    void* c = malloc(sizeof(long));
+    *(long*)a = 1;
+    *(long*)b = 2;
+    *(long*)c = 3;
+    listPush(&l, a, 1);
+    listPush(&l, b, 1);
+    listPush(&l, c, 1);
+    EXPECT_EQ(l.start->number, a) << "Error in push in list";
+    EXPECT_EQ(l.start->next->number, b) << "Error in push in list";
+    EXPECT_EQ(l.start->next->next->number, c) << "Error in push in list";
+    Node* current = l.start;
+    while (current != NULL) {
+        Node* next = current->next;
+        free(current->number);
+        free(current);
+        current = next;
+    }
+    l.start = NULL;
+    l.end = NULL;
+}
+
+TEST(TestList, TestPop)
 {
 
     List l;
@@ -48,9 +71,9 @@ TEST(TestList, TestPushPop)
     a1 = listPop(&l);
     b1 = listPop(&l);
     c1 = listPop(&l);
-    EXPECT_EQ(a1, a) << "Error in push-pop in list";
-    EXPECT_EQ(b1, b) << "Error in push-pop in list";
-    EXPECT_EQ(c1, c) << "Error in push-pop in list";
+    EXPECT_EQ(a1, a) << "Error in pop in list";
+    EXPECT_EQ(b1, b) << "Error in pop in list";
+    EXPECT_EQ(c1, c) << "Error in pop in list";
     Node* current = l.start;
     while (current != NULL) {
         Node* next = current->next;

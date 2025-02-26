@@ -54,7 +54,7 @@ build/StackTest.exe: build/gtest/gtest_main.a build/app-test.o tests/unit/StackT
 
 build/ListTest.exe: build/gtest/gtest_main.a build/app-test.o tests/unit/ListTest.cpp
 	@g++ -isystem $(GTEST_DIR)/include -pthread \
-		tests/sunit/ListTest.cpp \
+		tests/unit/ListTest.cpp \
 		build/gtest/gtest_main.a build/app-test.o \
 		-o build/ListTest.exe
 

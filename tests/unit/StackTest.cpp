@@ -19,15 +19,26 @@ typedef struct List {
 
 void* stackPop(Stack* s);
 void stackPush(Stack* s, void* num, int isNum);
-void stackPrint(Stack* s);
-void listPush(List* l, void* n, int isNum);
-void* listPop(List* l);
-int opPriority(int op1, int op2);
-List parse();
-void Calculate(List* list);
 }
 
-TEST(TestStack, TestPushPopPrint)
+TEST(TestStack, TestPush)
+{
+    void* a = malloc(sizeof(long));
+    void* b = malloc(sizeof(long));
+    void* c = malloc(sizeof(long));
+    *(long*)a = 1;
+    *(long*)b = 2;
+    *(long*)c = 3;
+    Stack s;
+    stackPush(&s, a, 1);
+    stackPush(&s, b, 1);
+    stackPush(&s, c, 1);
+    EXPECT_EQ(s.top->number, c) << "Error in push in stack";
+    EXPECT_EQ(s.top->next->number, b) << "Error in push in stack";
+    EXPECT_EQ(s.top->next->next->number, a) << "Error in push in stack";
+}
+
+TEST(TestStack, TestPop)
 {
     void* a = malloc(sizeof(long));
     void* b = malloc(sizeof(long));

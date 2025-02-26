@@ -1,6 +1,8 @@
 *.o
 *.exe
 *.out
+.pytest_cache/
+__pycache__/
 googletest/
 build/
 myenv/

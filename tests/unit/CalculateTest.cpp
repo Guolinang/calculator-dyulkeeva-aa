@@ -17,13 +17,9 @@ typedef struct List {
     Node* end;
 } List;
 
-void* stackPop(Stack* s);
-void stackPush(Stack* s, void* num, int isNum);
-void stackPrint(Stack* s);
+
 void listPush(List* l, void* n, int isNum);
 void* listPop(List* l);
-int opPriority(int op1, int op2);
-List parse();
 void* Calculate(List* list);
 }
 
@@ -48,7 +44,7 @@ TEST(CalculateTest, TestC)
     listPush(&list, d, 0);
     listPush(&list, e, 0);
     void* res = Calculate(&list);
-    EXPECT_EQ(*(int*)res, 5) << "Error in push-pop in list";
+    EXPECT_EQ(*(int*)res, 5) << "Error in calculate";
     Node* current = list.start;
     while (current != NULL) {
         Node* next = current->next;

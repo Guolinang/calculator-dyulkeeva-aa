@@ -101,126 +101,129 @@ List parse()
     do {
         tmp = getchar();
         switch (tmp) {
-            case '0':
-            case '1':
-            case '2':
-            case '3':
-            case '4':
-            case '5':
-            case '6':
-            case '7':
-            case '8':
-            case '9':
-                numb = numb * 10 + (tmp - '0');
-                flagNumb = 1;
-                break;
-            case '(':
-                if (flagNumb) {
-                    if (isFloat == 1) {
-                        ptr = malloc(sizeof(double));
-                        *(double*)ptr = numb;
-                    } else {
-                        ptr = malloc(sizeof(long));
-                        *(long*)ptr = numb;
-                    }
-                    listPush(&list, ptr, 1);
-                    numb = 0;
-                    flagNumb = 0;
-                }
-                ptr = malloc(sizeof(char));
-                *(char*)ptr = tmp;
-                stackPush(&stack, ptr, 0);
-                break;
-            case ')':
-                if (flagNumb) {
-                    if (isFloat == 1) {
-                        ptr = malloc(sizeof(double));
-                        *(double*)ptr = numb;
-                    } else {
-                        ptr = malloc(sizeof(long));
-                        *(long*)ptr = numb;
-                    }
-                    listPush(&list, ptr, 1);
-                    numb = 0;
-                    flagNumb = 0;
-                }
-                while (stack.top != NULL && *(char*)stack.top->number != '(') {
-                    void* tNumb = stackPop(&stack);
-                    listPush(&list, tNumb, 0);
-                }
-                if (stack.top != NULL)
-                    stackPop(&stack);
+        case '0':
+        case '1':
+        case '2':
+        case '3':
+        case '4':
+        case '5':
+        case '6':
+        case '7':
+        case '8':
+        case '9':
+            numb = numb * 10 + (tmp - '0');
+            flagNumb = 1;
             break;
-            case '+':
-            case '-':
-            case '*':
-            case '/':
-                if (flagNumb) {
-                    if (isFloat == 1) {
-                        ptr = malloc(sizeof(double));
-                        *(double*)ptr = numb;
-                    } else {
-                        ptr = malloc(sizeof(long));
-                        *(long*)ptr = numb;
-                    }
-                    listPush(&list, ptr, 1);
-                    numb = 0;
-                    flagNumb = 0;
+        case '(':
+            if (flagNumb) {
+                if (isFloat == 1) {
+                    ptr = malloc(sizeof(double));
+                    *(double*)ptr = numb;
+                } else {
+                    ptr = malloc(sizeof(long));
+                    *(long*)ptr = numb;
                 }
-                while (stack.top != NULL && opPriority(*(char*)stack.top->number, tmp) != 2 && *(char*)stack.top->number != '(') {
-                    void* tNumb = stackPop(&stack);
-                    listPush(&list, tNumb, 0);
+                listPush(&list, ptr, 1);
+                numb = 0;
+                flagNumb = 0;
+            }
+            ptr = malloc(sizeof(char));
+            *(char*)ptr = tmp;
+            stackPush(&stack, ptr, 0);
+            break;
+        case ')':
+            if (flagNumb) {
+                if (isFloat == 1) {
+                    ptr = malloc(sizeof(double));
+                    *(double*)ptr = numb;
+                } else {
+                    ptr = malloc(sizeof(long));
+                    *(long*)ptr = numb;
                 }
-                ptr = malloc(sizeof(char));
-                *(char*)ptr = tmp;
-                stackPush(&stack, ptr, 0);
+                listPush(&list, ptr, 1);
+                numb = 0;
+                flagNumb = 0;
+            }
+            while (stack.top != NULL && *(char*)stack.top->number != '(') {
+                void* tNumb = stackPop(&stack);
+                listPush(&list, tNumb, 0);
+            }
+            if (stack.top == NULL)
+                exit(-2);
+            if (stack.top != NULL) {
+                stackPop(&stack);
+            }
+            break;
+        case '+':
+        case '-':
+        case '*':
+        case '/':
+            if (flagNumb) {
+                if (isFloat == 1) {
+                    ptr = malloc(sizeof(double));
+                    *(double*)ptr = numb;
+                } else {
+                    ptr = malloc(sizeof(long));
+                    *(long*)ptr = numb;
+                }
+                listPush(&list, ptr, 1);
+                numb = 0;
+                flagNumb = 0;
+            }
+            while (stack.top != NULL && opPriority(*(char*)stack.top->number, tmp) != 2 && *(char*)stack.top->number != '(') {
+                void* tNumb = stackPop(&stack);
+                listPush(&list, tNumb, 0);
+            }
+            ptr = malloc(sizeof(char));
+            *(char*)ptr = tmp;
+            stackPush(&stack, ptr, 0);
 
-                break;
-            case EOF:
-                if (flagNumb) {
-                    if (isFloat == 1) {
-                        ptr = malloc(sizeof(double));
-                        *(double*)ptr = numb;
-                    } else {
-                        ptr = malloc(sizeof(long));
-                        *(long*)ptr = numb;
-                    }
-                    listPush(&list, ptr, 1);
-                    numb = 0;
-                    flagNumb = 0;
+            break;
+        case EOF:
+            if (flagNumb) {
+                if (isFloat == 1) {
+                    ptr = malloc(sizeof(double));
+                    *(double*)ptr = numb;
+                } else {
+                    ptr = malloc(sizeof(long));
+                    *(long*)ptr = numb;
                 }
+                listPush(&list, ptr, 1);
+                numb = 0;
+                flagNumb = 0;
+            }
 
-                while (stack.top != NULL) {
-                    void* tNumb = stackPop(&stack);
-                    listPush(&list, tNumb, 0);
+            while (stack.top != NULL) {
+                void* tNumb = stackPop(&stack);
+                listPush(&list, tNumb, 0);
+            }
+            goto BREAK;
+        case '\t':
+        case '\r':
+        case '\v':
+        case '\f':
+        case '\n':
+        case ' ':
+            if (flagNumb) {
+                if (isFloat == 1) {
+                    ptr = malloc(sizeof(double));
+                    *(double*)ptr = numb;
+                } else {
+                    ptr = malloc(sizeof(long));
+                    *(long*)ptr = numb;
                 }
-                goto BREAK;
-            case '\t':
-            case '\r':
-            case '\v':
-            case '\f':
-            case '\n':
-            case ' ':
-                if (flagNumb) {
-                    if (isFloat == 1) {
-                        ptr = malloc(sizeof(double));
-                        *(double*)ptr = numb;
-                    } else {
-                        ptr = malloc(sizeof(long));
-                        *(long*)ptr = numb;
-                    }
-                    listPush(&list, ptr, 1);
-                    numb = 0;
-                    flagNumb = 0;
-                }
-                break;
-            default:
-                printf("Ne rabotaet?ny xz, zaplach`");
-                exit(-1);
+                listPush(&list, ptr, 1);
+                numb = 0;
+                flagNumb = 0;
+            }
+            break;
+        default:
+            printf("Ne rabotaet?ny xz, zaplach`");
+            exit(-1);
         }
 
     } while (tmp != -1);
-    BREAK:
+BREAK:
     return list;
 }
 
